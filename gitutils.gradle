@@ -1,0 +1,17 @@
+def getGitCommitHash() {
+    boolean flag = isInJenkins();
+    if (flag) {
+        return System.getenv()['GIT_COMMIT'][0..6]
+    } else {
+        'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+    }
+}
+
+def getGitCommitCount() {
+    boolean flag = isInJenkins();
+    if (flag) {
+        return rootProject.ext.android.versionCode
+    } else {
+        Integer.parseInt('git rev-list HEAD --count'.execute([], project.rootDir).text.trim())
+    }
+}
