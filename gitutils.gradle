@@ -1,3 +1,27 @@
+boolean isInJenkins() {
+    Map<String, String> map = System.getenv()
+
+    if (map == null) {
+        return false
+    }
+    String str = map.get("Path")
+    if (str != null) {
+        //it's windows
+        return false;
+    } else {
+        str = ""
+        Iterator it = map.iterator();
+        while (it.hasNext()) {
+            str += it.next();
+        }
+        if (str.contains("jenkins")) {
+            return true
+        } else {
+            return false;
+        }
+    }
+}
+
 def getGitCommitHash() {
     boolean flag = isInJenkins();
     if (flag) {
