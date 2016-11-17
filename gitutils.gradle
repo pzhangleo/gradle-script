@@ -1,3 +1,21 @@
+buildscript {
+    repositories {
+        maven { url 'http://repo1.maven.org/maven2' }
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.2'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+}
+
 boolean isInJenkins() {
     Map<String, String> map = System.getenv()
 
