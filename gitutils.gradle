@@ -1,22 +1,7 @@
-buildscript {
-    repositories {
-        maven { url 'http://repo1.maven.org/maven2' }
-        jcenter()
-        maven { url "https://jitpack.io" }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
-    }
-}
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
-allprojects {
-    repositories {
-        jcenter()
-        maven { url "https://jitpack.io" }
-    }
-}
-
-boolean isInJenkins() {
+ext.isInJenkins = { ->
     Map<String, String> map = System.getenv()
 
     if (map == null) {
@@ -40,7 +25,48 @@ boolean isInJenkins() {
     }
 }
 
-def getGitCommitHash() {
+/**
+ * 获取Jenkins Build 号
+ * @return
+ */
+ext.getJenkinsBuildCode = { ->
+    boolean flag = isInJenkins();
+    if (flag) {
+        ext.env = System.getenv()
+        ext.buildNumber = env.BUILD_NUMBER?.toInteger()
+        return "$buildNumber"
+    } else {
+        return ""
+    }
+}
+
+/**productflavors
+ * 获取Jenkins Build 号
+ * @return
+ */
+ext.getJenkinsBuildType = { ->
+    boolean flag = isInJenkins();
+    if (flag) {
+        ext.env = System.getenv()
+        ext.buildtype = env.buildtype?.toString()
+        return "$buildtype"
+    } else {
+        return ""
+    }
+}
+
+ext.getJenkinsProductFlavors = { ->
+    boolean flag = isInJenkins();
+    if (flag) {
+        ext.env = System.getenv()
+        ext.productflavors = env.productflavors?.toString()
+        return productflavors != null ? "$productflavors" : ""
+    } else {
+        return ""
+    }
+}
+
+ext.getGitCommitHash = { ->
     boolean flag = isInJenkins();
     if (flag) {
         return System.getenv()['GIT_COMMIT'][0..6]
@@ -49,11 +75,31 @@ def getGitCommitHash() {
     }
 }
 
-def getGitCommitCount() {
+ext.getGitCommitCount = { ->
     boolean flag = isInJenkins();
     if (flag) {
-        return rootProject.ext.android.versionCode
+        return getJenkinsBuildCode()
     } else {
         Integer.parseInt('git rev-list HEAD --count'.execute([], project.rootDir).text.trim())
+    }
+}
+
+ext.getCurrentFlavor = { ->
+    ext.gradle = getGradle()
+    String tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
+    Pattern pattern;
+
+    if (tskReqStr.contains("assemble"))
+        pattern = Pattern.compile("assemble(\\w+)(Release|Debug)")
+    else
+        pattern = Pattern.compile("generate(\\w+)(Release|Debug)")
+
+    Matcher matcher = pattern.matcher(tskReqStr)
+
+    if (matcher.find())
+        return matcher.group(1).toLowerCase()
+    else {
+        println "NO MATCH FOUND"
+        return "";
     }
 }
