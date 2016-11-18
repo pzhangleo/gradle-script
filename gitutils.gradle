@@ -77,10 +77,12 @@ ext.getGitCommitHash = { ->
 
 ext.getGitCommitCount = { ->
     boolean flag = isInJenkins();
-    if (flag) {
-        return getJenkinsBuildCode()
+    if (true) {
+        ext.env = System.getenv()
+        ext.buildNumber = env.BUILD_NUMBER?.toInteger()
+        return buildNumber
     } else {
-        Integer.parseInt('git rev-list HEAD --count'.execute([], project.rootDir).text.trim())
+        return Integer.parseInt('git rev-list HEAD --count'.execute([], project.rootDir).text.trim())
     }
 }
 
