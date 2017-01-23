@@ -68,11 +68,12 @@ ext.getJenkinsProductFlavors = { ->
 
 ext.getGitCommitHash = { ->
     boolean flag = isInJenkins();
-    if (flag) {
+    return 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+/*    if (flag) {
         return System.getenv()['GIT_COMMIT'][0..6]
     } else {
         'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
-    }
+    } */
 }
 
 ext.getGitCommitCount = { ->
