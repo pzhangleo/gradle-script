@@ -17,7 +17,7 @@ ext.isInJenkins = { ->
         while (it.hasNext()) {
             str += it.next();
         }
-        if (str.contains("jenkins")) {
+        if (str.contains("jenkins")||str.contains("travis") {
             return true
         } else {
             return false;
