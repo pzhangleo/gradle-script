@@ -17,7 +17,7 @@ ext.isInJenkins = { ->
         while (it.hasNext()) {
             str += it.next();
         }
-        if (str.contains("jenkins")||str.contains("travis")) {
+        if (str.contains("jenkins")) {
             return true
         } else {
             return false;
@@ -68,12 +68,11 @@ ext.getJenkinsProductFlavors = { ->
 
 ext.getGitCommitHash = { ->
     boolean flag = isInJenkins();
-    return 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
-/*    if (flag) {
+    if (flag) {
         return System.getenv()['GIT_COMMIT'][0..6]
     } else {
         'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
-    } */
+    }
 }
 
 ext.getGitCommitCount = { ->
